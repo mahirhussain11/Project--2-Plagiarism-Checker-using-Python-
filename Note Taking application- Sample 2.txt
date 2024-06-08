@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@1,500&display=swap"
+      rel="stylesheet"
+    />
+    <script defer src="script.js"></script>
+    <title>Note Taker Application</title>
+  </head>
+  <body>
+    <div class="modal-container">
+      <div class="modal">
+        <button class="modal__btn">&times;</button>
+      </div>
+    </div>
+    <div class="form-container">
+      <h1>Note Taker</h1>
+      <h3>Add a New Note:</h3>
+      <form>
+        <label for="title"
+          >Title
+          <input type="text" id="title" placeholder="Enter a note title." />
+        </label>
+        <label for="note"
+          >Note
+          <textarea
+            type="text"
+            id="note"
+            cols="30"
+            rows="10"
+            placeholder="Enter note text."
+          ></textarea>
+        </label>
+
+        <input type="submit" />
+      </form>
+    </div>
+    <div class="note-container"></div>
+  </body>
+</html>
+
+* {
+  font-family: "IBM Plex Mono", monospace;
+}
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #6f1ab6;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+
+.form-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+  background-color: #f2bed1;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  background-color: #ff55bb;
+}
+
+input[type="text"] {
+  background-color: #ecc9ee;
+}
+
+textarea {
+  background-color: #ecc9ee;
+}
+
+input[type="submit"] {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+input[type="submit"]:hover {
+  background-color: #0069d9;
+}
+
+.modal-container {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal {
+  background-color: #fff;
+  max-width: 500px;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.modal__btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: transparent;
+  border: none;
+  font-size: 25px;
+  cursor: pointer;
+  color: #888;
+}
+
+.modal__btn:hover {
+  color: #000;
+}
+
+.note-container {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  background-color: #ece8dd;
+}
+
+.note-container h3 {
+  color: black;
+}
+
+.note {
+  border: 1px solid #f7f7f7;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.note__title {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #444;
+}
+
+.note__body {
+  color: #444;
+  font-size: 16px;
+  line-height: 1.4;
+}
+const noteContainer = document.querySelector(".note-container");
+const modalContainer = document.querySelector(".modal-container");
+const form = document.querySelector("form");
+const titleInput = document.querySelector("#title");
+
+class Note {
+  constructor(title, body) {
+    this.title = title;
+    this.body = body;
+    this.id = Math.random();
+  }
+}
+
+function getNotes() {
+  let notes;
+  if (localStorage.getItem("noteApp.notes") === null) {
+    notes = [];
+  } else {
+    notes = JSON.parse(localStorage.getItem("noteApp.notes"));
+  }
+  return notes;
+}
+
+function addNotesToLocalStorage(note) {
+  const notes = getNotes();
+  notes.push(note);
+  localStorage.setItem("noteApp.notes", JSON.stringify(notes));
+}
+
+function removeNote(id) {
+  const notes = getNotes();
+  notes.forEach((note, index) => {
+    if (note.id === id) {
+      notes.splice(index, 1);
+    }
+    localStorage.setItem("noteApp.notes", JSON.stringify(notes));
+  });
+}
+
+function addNoteToList(note) {
+  const newUINote = document.createElement("div");
+  newUINote.classList.add("note");
+  newUINote.innerHTML = `
+    <span hidden>${note.id}</span>
+    <h2 class="note__title">${note.title}</h2>
+    <p class="note__body">${note.body}</p>
+    <div class="note__btns">
+      <button class="note__btn note__view">View Detail</button>
+      <button class="note__btn note__delete">Delete Note</button>
+    </div>
+  `;
+  noteContainer.appendChild(newUINote);
+}
+
+function displayNotes() {
+  const notes = getNotes();
+  notes.forEach((note) => {
+    addNoteToList(note);
+  });
+}
+
+function showAlertMessage(message, alertClass) {
+  const alertDiv = document.createElement("div");
+  alertDiv.className = `message ${alertClass}`;
+  alertDiv.appendChild(document.createTextNode(message));
+  form.insertAdjacentElement("beforebegin", alertDiv);
+  titleInput.focus();
+  setTimeout(() => alertDiv.remove(), 2000);
+}
+
+function activateNoteModal(title, body) {
+  const modalTitle = document.querySelector(".modal__title");
+  const modalBody = document.querySelector(".modal__body");
+  modalTitle.textContent = title;
+  modalBody.textContent = body;
+  modalContainer.classList.add("active");
+}
+
+const modalBtn = document
+  .querySelector(".modal__btn")
+  .addEventListener("click", () => {
+    modalContainer.classList.remove("active");
+  });
+
+noteContainer.addEventListener("click", (e) => {
+  if (e.target.classList.contains("note__view")) {
+    const currentNote = e.target.closest(".note");
+    const currentTitle = currentNote.querySelector(".note__title").textContent;
+    const currentBody = currentNote.querySelector(".note__body").textContent;
+    activateNoteModal(currentTitle, currentBody);
+  }
+  if (e.target.classList.contains("note__delete")) {
+    const currentNote = e.target.closest(".note");
+    showAlertMessage("Your note was permanently deleted", "remove-message");
+    currentNote.remove();
+    const id = currentNote.querySelector("span").textContent;
+    removeNote(Number(id));
+  }
+});
+
+document.addEventListener("DOMContentLoaded", displayNotes);
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const noteInput = document.querySelector("#note");
+
+  if (titleInput.value.length > 0 && noteInput.value.length > 0) {
+    const newNote = new Note(titleInput.value, noteInput.value);
+    addNoteToList(newNote);
+    addNotesToLocalStorage(newNote);
+    titleInput.value = "";
+    noteInput.value = "";
+    showAlertMessage("Note successfully added", "success-message");
+    titleInput.focus();
+  } else {
+    showAlertMessage("Please add both a title and a note", "alert-message");
+  }
+});

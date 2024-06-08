@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Temperature Converter</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Temperature Converter</h1>
+      <div class="input">
+        <label for="input-value">Input value:</label>
+        <input type="number" id="input-value" />
+        <select id="input-unit">
+          <option value="celsius">Celsius</option>
+          <option value="fahrenheit">Fahrenheit</option>
+          <option value="kelvin">Kelvin</option>
+        </select>
+      </div>
+      <div class="output">
+        <label for="output-value">Output value:</label>
+        <input type="number" id="output-value" readonly />
+        <select id="output-unit">
+          <option value="celsius">Celsius</option>
+          <option value="fahrenheit">Fahrenheit</option>
+          <option value="kelvin">Kelvin</option>
+        </select>
+      </div>
+      <button id="convert-btn">Convert</button>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>* {
+  margin-top: 1%;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  background-color: #9e4784;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #a4bc92;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: black;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+  text-decoration: underline;
+  font-family: "Roboto Slab", serif;
+}
+
+.input,
+.output {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.input label,
+.output label {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.input input,
+.output input,
+.input select,
+.output select {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: none;
+  background-color: #f6f1e9;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.input input,
+.output input {
+  width: 100%;
+}
+
+.input select,
+.output select {
+  width: 50%;
+}
+
+#convert-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #245953;
+  color: #fff;
+  font-size: 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+#convert-btn:hover {
+  background-color: #0072ff;
+}const convertBtn = document.querySelector("#convert-btn");
+const inputValue = document.querySelector("#input-value");
+const inputUnit = document.querySelector("#input-unit");
+const outputValue = document.querySelector("#output-value");
+const outputUnit = document.querySelector("#output-unit");
+
+function convertTemperature() {
+  const inputTemp = parseFloat(inputValue.value);
+  let outputTemp;
+
+  if (inputUnit.value === "celsius") {
+    if (outputUnit.value === "fahrenheit") {
+      outputTemp = (inputTemp * 9) / 5 + 32;
+    } else if (outputUnit.value === "kelvin") {
+      outputTemp = inputTemp + 273.15;
+    } else {
+      outputTemp = inputTemp;
+    }
+  } else if (inputUnit.value === "fahrenheit") {
+    if (outputUnit.value === "celsius") {
+      outputTemp = ((inputTemp - 32) * 5) / 9;
+    } else if (outputUnit.value === "kelvin") {
+      outputTemp = ((inputTemp - 32) * 5) / 9 + 273.15;
+    } else {
+      outputTemp = inputTemp;
+    }
+  } else if (inputUnit.value === "kelvin") {
+    if (outputUnit.value === "celsius") {
+      outputTemp = inputTemp - 273.15;
+    } else if (outputUnit.value === "fahrenheit") {
+      outputTemp = ((inputTemp - 273.15) * 9) / 5 + 32;
+    } else {
+      outputTemp = inputTemp;
+    }
+  }
+
+  outputValue.value = outputTemp.toFixed(2);
+}
+
+convertBtn.addEventListener("click", convertTemperature);
